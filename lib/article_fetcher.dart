@@ -5,8 +5,10 @@ import 'dart:convert';
 
 class Article {
   final String title;
+  final String summary;
+  final String imageUrl;
 
-  Article(this.title);
+  Article(this.title, this.summary, this.imageUrl);
 }
 
 class ArticleFetcher {
@@ -29,7 +31,10 @@ class ArticleFetcher {
         final results = body['results'] as List<dynamic>;
         for (var result in results) {
           final title = result['title'] as String;
-          final article = Article(title);
+          final summary = result['summary'] as String;
+          final imageUrl = result['image']['href'] as String;
+
+          final article = Article(title, summary, imageUrl);
           articles.add(article);
         }
       }
