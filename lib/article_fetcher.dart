@@ -2,14 +2,7 @@ import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-
-class Article {
-  final String title;
-  final String summary;
-  final String imageUrl;
-
-  Article(this.title, this.summary, this.imageUrl);
-}
+import 'article.dart';
 
 class ArticleFetcher {
   Future<List<Article>> fetch() async {
@@ -33,8 +26,10 @@ class ArticleFetcher {
           final title = result['title'] as String;
           final summary = result['summary'] as String;
           final imageUrl = result['image']['href'] as String;
+          final url = result['url'] as String;
+          final detailsUrl = "https://www.bbc.com$url";
 
-          final article = Article(title, summary, imageUrl);
+          final article = Article(title, summary, imageUrl, detailsUrl);
           articles.add(article);
         }
       }

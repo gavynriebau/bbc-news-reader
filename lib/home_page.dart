@@ -1,7 +1,9 @@
-import 'package:bbc_mobile/article_fetcher.dart';
-import 'package:bbc_mobile/details_page.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
+
+import 'article.dart';
+import 'article_fetcher.dart';
+import 'details_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key, required this.title});
@@ -26,8 +28,8 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> populateArticles() async {
     final articles = await articleFetcher.fetch();
-
     final numArticles = articles.length;
+
     developer.log("Fetched $numArticles articles");
 
     setState(() {
@@ -57,7 +59,7 @@ class _HomePageState extends State<HomePage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const DetailsPage())
+                  MaterialPageRoute(builder: (context) => DetailsPage(article: article))
                 );
               },
         );
