@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
+import 'package:transparent_image/transparent_image.dart';
 
 import '../article.dart';
 import '../article_fetcher.dart';
@@ -63,24 +64,32 @@ class _ArticleListViewState extends State<ArticleListView> {
         final imageBuilder = FutureBuilder<String>(
             future: featureImageUrl,
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              if (!snapshot.hasData) {
-                return const CircularProgressIndicator();
-              }
-
               if (snapshot.hasError) {
                 return const Text("Failed");
               }
 
               final imageUrl = snapshot.data ?? "";
               if (imageUrl.isEmpty) {
-                return const Text("None");
+                return const Placeholder();
               }
 
-              return Image.network(imageUrl, alignment: Alignment.topCenter);
+              return FadeInImage.memoryNetwork(
+                  placeholder: kTransparentImage,
+                  image: imageUrl,
+                  width: 100,
+                  height: 100,
+                  repeat: ImageRepeat.repeat,
+                  );
             });
 
         return ListTile(
-          leading: imageBuilder,
+          // leading: imageBuilder,
+          leading: SizedBox(
+            width: 100,
+            height: 100,
+            child: Center(child: imageBuilder),
+          ),
+          isThreeLine: true,
           title: Text(
             article.title,
             style: titleStyle,
