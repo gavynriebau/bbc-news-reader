@@ -56,12 +56,12 @@ class _HomePageState extends State<HomePage> {
           ),
           subtitle: Text(article.summary,
               style: Theme.of(context).listTileTheme.subtitleTextStyle),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => DetailsPage(article: article))
-                );
-              },
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DetailsPage(article: article)));
+          },
         );
       },
     );
@@ -74,12 +74,20 @@ class _HomePageState extends State<HomePage> {
         : buildListViewForArticles(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: center,
-      ),
-    );
+        appBar: AppBar(
+          title: Text(widget.title),
+          bottom: const TabBar(tabs: [
+            Tab(text: "Top Stories"),
+            Tab(text: "Tech"),
+          ]),
+        ),
+        body: TabBarView(children: [
+          Center(
+            child: center,
+          ),
+          Center(
+            child: center,
+          ),
+        ]));
   }
 }
