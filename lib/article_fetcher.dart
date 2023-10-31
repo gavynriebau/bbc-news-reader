@@ -6,36 +6,54 @@ import 'package:html/parser.dart';
 import 'article.dart';
 
 class ArticleFetcher {
-  Future<List<Article>> fetch() async {
-    developer.log("Fetching articles...");
+  Future<List<Article>> fetchFromRssFeed(String rssUrl) async {
+    developer.log("Fetching articles from RSS feed '$rssUrl'...");
 
     final articles = <Article>[];
-
-    final response = await http.get(Uri.parse('https://push.api.bbci.co.uk/batch?t=%2Fdata%2Fbbc-morph-%7Blx-commentary-data-paged%2Fabout%2Fe745fc56-51bf-46b5-9b74-f0f529ea4d8e%2FisUk%2Ffalse%2Flimit%2F20%2FnitroKey%2Flx-nitro%2FpageNumber%2F0%2Fversion%2F1.5.6%2Clx-commentary-data-paged%2Fabout%2Fe745fc56-51bf-46b5-9b74-f0f529ea4d8e%2FisUk%2Ffalse%2Flimit%2F20%2FnitroKey%2Flx-nitro%2FpageNumber%2F1%2Fversion%2F1.5.6%2Clx-commentary-data-paged%2Fabout%2Fe745fc56-51bf-46b5-9b74-f0f529ea4d8e%2FisUk%2Ffalse%2Flimit%2F20%2FnitroKey%2Flx-nitro%2FpageNumber%2F50%2Fversion%2F1.5.6%7D?timeout=5'));
+    final response = await http.get(Uri.parse(rssUrl));
 
     final statusCode = response.statusCode;
     developer.log("response.statusCode = $statusCode");
 
     if (statusCode == 200) {
-      final json = jsonDecode(response.body) as Map<String, dynamic>;  
-      final payload = json['payload'] as List<dynamic>;
+      final document = parse(response.body);
 
-      for (var item in payload) {
-        final body = item['body'] as Map<String, dynamic>;
-        final results = body['results'] as List<dynamic>;
-        for (var result in results) {
-          final title = result['title'] as String;
-          final summary = result['summary'] as String;
-          final imageUrl = result['image']['href'] as String;
-          final url = result['url'] as String;
-          final detailsUrl = "https://www.bbc.com$url";
+      final html = document.outerHtml;
+      developer.log("Fetched html = $html");
 
-          final article = Article(title, summary, imageUrl, detailsUrl);
-          articles.add(article);
+      final elements = document.querySelectorAll('channel > item');
+
+      // Title and subtitle are wrapped in a CDATA tag.
+      RegExp cdataRegex = RegExp(r'<!\[CDATA\[(.*)\]\]>');
+
+      for (var element in elements) {
+        final titleRaw = element.querySelector('title')?.text;
+        final subtitleRaw = element.querySelector('description')?.text;
+        final url = element.querySelector('guid')?.text;
+
+        if (titleRaw == null || subtitleRaw == null || url == null) {
+          developer.log(
+              "Failed to parse document as it was missing a required element");
+          continue;
         }
-      }
 
-      
+        final titleMatch = cdataRegex.firstMatch(titleRaw);
+        final title = titleMatch?.group(1);
+
+        final subtitleMatch = cdataRegex.firstMatch(titleRaw);
+        final subtitle = subtitleMatch?.group(1);
+
+        if (title == null || subtitle == null) {
+          developer.log(
+              "Failed to parse document as it was missing a required element");
+          continue;
+        }
+
+        final article = Article(
+            title: title, summary: subtitle, detailsUrl: url);
+
+        articles.add(article);
+      }
     }
 
     return articles;
@@ -53,9 +71,9 @@ class ArticleFetcher {
     developer.log("response.statusCode = $statusCode");
 
     if (statusCode == 200) {
-      // contents = response.body;
       var document = parse(response.body);
-      var elements = document.querySelectorAll('#main-content > article > [data-component=text-block]');
+      var elements = document.querySelectorAll(
+          '#main-content > article > [data-component=text-block]');
       contents = elements.map((e) => e.text).join("\n\n");
       //print(document.outerHtml);
       developer.log("contents = $contents");
@@ -63,5 +81,5 @@ class ArticleFetcher {
 
     return contents;
   }
-}
 
+}

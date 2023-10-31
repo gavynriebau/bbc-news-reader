@@ -5,6 +5,14 @@ import '../article.dart';
 import '../article_fetcher.dart';
 import '../pages/details_page.dart';
 
+class ArticleWithFeatureImage {
+  final Article article;
+  final Future<String> featureImageUrl;
+
+  ArticleWithFeatureImage(
+      {required this.article, required this.featureImageUrl});
+}
+
 class ArticleListView extends StatefulWidget {
   final String rssUrl;
 
@@ -16,7 +24,7 @@ class ArticleListView extends StatefulWidget {
 
 class _ArticleListViewState extends State<ArticleListView> {
   bool _loading = true;
-  final _articles = <Article>[];
+  final _articles = <ArticleWithFeatureImage>[];
   final articleFetcher = ArticleFetcher();
 
   @override
@@ -26,13 +34,17 @@ class _ArticleListViewState extends State<ArticleListView> {
   }
 
   Future<void> populateArticles() async {
-    final articles = await articleFetcher.fetch();
+    final articles = await articleFetcher.fetchFromRssFeed(widget.rssUrl);
+    final articlesWithFeatureImages = articles.map((e) {
+      return ArticleWithFeatureImage(
+          article: e, featureImageUrl: e.featureImageUrl());
+    });
     final numArticles = articles.length;
 
     developer.log("Fetched $numArticles articles");
 
     setState(() {
-      _articles.addAll(articles);
+      _articles.addAll(articlesWithFeatureImages);
       _loading = false;
     });
   }
@@ -41,14 +53,34 @@ class _ArticleListViewState extends State<ArticleListView> {
     return ListView.builder(
       itemCount: _articles.length,
       itemBuilder: (context, index) {
-        final article = _articles[index];
+        final articleWithFeatureImage = _articles[index];
+        final article = articleWithFeatureImage.article;
+        final featureImageUrl = articleWithFeatureImage.featureImageUrl;
 
         final titleStyle = const TextStyle(fontWeight: FontWeight.bold)
             .merge(Theme.of(context).listTileTheme.titleTextStyle);
 
+        final imageBuilder = FutureBuilder<String>(
+            future: featureImageUrl,
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              if (!snapshot.hasData) {
+                return const Text("Loading");
+              }
+
+              if (snapshot.hasError) {
+                return const Text("Failed");
+              }
+
+              final imageUrl = snapshot.data ?? "";
+              if (imageUrl.isEmpty) {
+                return const Text("None");
+              }
+
+              return Image.network(imageUrl, alignment: Alignment.topCenter);
+            });
+
         return ListTile(
-          leading:
-              Image.network(article.imageUrl, alignment: Alignment.topCenter),
+          leading: imageBuilder,
           title: Text(
             article.title,
             style: titleStyle,

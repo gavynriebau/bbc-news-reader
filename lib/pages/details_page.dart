@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../article.dart';
-import '../article_fetcher.dart';
 
 const padding = 16.0;
 
@@ -16,8 +15,7 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   bool _loading = true;
   String _contents = "";
-
-  final fetcher = ArticleFetcher();
+  String _imageUrl = "";
 
   @override
   void initState() {
@@ -26,9 +24,11 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   void fetchArticleContents() async {
-    final contents = await fetcher.contents(widget.article);
+    final contents = await widget.article.contents();
+    final imageUrl = await widget.article.featureImageUrl();
     setState(() {
       _contents = contents;
+      _imageUrl = imageUrl;
       _loading = false;
     });
   }
@@ -39,6 +39,18 @@ class _DetailsPageState extends State<DetailsPage> {
     }
 
     return Text(_contents);
+  }
+
+  Widget buildImage(BuildContext context) {
+    if (_loading) {
+      return const CircularProgressIndicator();
+    }
+
+    if (_imageUrl.isEmpty) {
+      return const Text("None");
+    }
+
+    return Image.network(_imageUrl, alignment: Alignment.topCenter);
   }
 
   @override
@@ -55,8 +67,7 @@ class _DetailsPageState extends State<DetailsPage> {
               child: Text(widget.article.title,
                   style: Theme.of(context).textTheme.titleLarge),
             ),
-            Image.network(widget.article.imageUrl,
-                alignment: Alignment.topCenter),
+            buildImage(context),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: padding),
               child: Text(widget.article.summary,
