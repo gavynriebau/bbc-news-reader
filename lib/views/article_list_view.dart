@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 
-import 'article.dart';
-import 'article_fetcher.dart';
-import 'constants.dart';
-import 'details_page.dart';
+import '../article.dart';
+import '../article_fetcher.dart';
+import '../pages/details_page.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class ArticleListView extends StatefulWidget {
+  final String rssUrl;
+
+  const ArticleListView({super.key, required this.rssUrl});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<ArticleListView> createState() => _ArticleListViewState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _ArticleListViewState extends State<ArticleListView> {
   bool _loading = true;
   final _articles = <Article>[];
-
   final articleFetcher = ArticleFetcher();
 
   @override
@@ -68,25 +68,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final center = _loading
+    final content = _loading
         ? const CircularProgressIndicator()
         : buildListViewForArticles(context);
 
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text(appTitle),
-          bottom: const TabBar(tabs: [
-            Tab(text: "Top Stories"),
-            Tab(text: "Tech"),
-          ]),
-        ),
-        body: TabBarView(children: [
-          Center(
-            child: center,
-          ),
-          Center(
-            child: center,
-          ),
-        ]));
+    return Center(child: content);
   }
 }
