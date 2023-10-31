@@ -3,12 +3,11 @@ import 'dart:developer' as developer;
 
 import 'article.dart';
 import 'article_fetcher.dart';
+import 'constants.dart';
 import 'details_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
-
-  final String title;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -75,7 +74,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.title),
+          title: const Text(appTitle),
           bottom: const TabBar(tabs: [
             Tab(text: "Top Stories"),
             Tab(text: "Tech"),
