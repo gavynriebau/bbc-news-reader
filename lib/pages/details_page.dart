@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import '../article.dart';
 
@@ -41,13 +43,13 @@ class _DetailsPageState extends State<DetailsPage> {
     return Text(_contents);
   }
 
-  Widget buildImage(BuildContext context) {
+  Widget? buildImage(BuildContext context) {
     if (_loading) {
       return const CircularProgressIndicator();
     }
 
     if (_imageUrl.isEmpty) {
-      return const Text("None");
+      return null;
     }
 
     return Image.network(_imageUrl, alignment: Alignment.topCenter);
@@ -76,7 +78,7 @@ class _DetailsPageState extends State<DetailsPage> {
             Container(
                 margin: const EdgeInsets.all(padding),
                 child: buildContents(context))
-          ],
+          ].nonNulls.toList(),
         ),
       ),
     );

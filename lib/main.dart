@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'pages/home_page.dart';
+import 'tab_details.dart';
 import 'theme.dart';
 
 void main() {
@@ -15,9 +16,9 @@ class UnofficialBbcApp extends StatelessWidget {
     return MaterialApp(
       title: appTitle,
       theme: themeData,
-      home: const DefaultTabController(
-        length: 2,
-        child: HomePage(),
+      home: DefaultTabController(
+        length: tabDetails.length,
+        child: const HomePage(),
       ),
     );
   }

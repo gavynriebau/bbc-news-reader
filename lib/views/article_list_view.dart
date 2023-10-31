@@ -64,7 +64,7 @@ class _ArticleListViewState extends State<ArticleListView> {
             future: featureImageUrl,
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
               if (!snapshot.hasData) {
-                return const Text("Loading");
+                return const CircularProgressIndicator();
               }
 
               if (snapshot.hasError) {
