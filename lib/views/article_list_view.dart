@@ -3,10 +3,9 @@ import 'dart:developer' as developer;
 
 import '../article.dart';
 import '../article_fetcher.dart';
+import '../constants.dart';
 import '../pages/details_page.dart';
-
-const leadingImageWidth = 100.0;
-const leadingImageHeight = 100.0;
+import '../theme.dart';
 
 class ArticleWithFeatureImage {
   final Article article;
@@ -62,10 +61,6 @@ class _ArticleListViewState extends State<ArticleListView> {
   }
 
   Widget buildListViewForArticles(BuildContext context) {
-    // TODO: Move styling to theme
-    const publicationDateStyle = TextStyle(
-        fontStyle: FontStyle.italic, fontSize: 12.0, color: Colors.black45);
-
     return ListView.builder(
       itemCount: _articles.length,
       itemBuilder: (context, index) {
