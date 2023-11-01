@@ -60,6 +60,15 @@ class _ArticleListViewState extends State<ArticleListView> {
     });
   }
 
+  Future<void> _refreshArticles() async {
+    setState(() {
+      _articles.clear();
+      _loading = true;
+    });
+
+    await populateArticles();
+  }
+
   Widget buildListViewForArticles(BuildContext context) {
     return ListView.builder(
       itemCount: _articles.length,
@@ -123,7 +132,10 @@ class _ArticleListViewState extends State<ArticleListView> {
   Widget build(BuildContext context) {
     final content = _loading
         ? const CircularProgressIndicator()
-        : buildListViewForArticles(context);
+        : RefreshIndicator(
+            onRefresh: _refreshArticles,
+            child: buildListViewForArticles(context),
+          );
 
     return Center(child: content);
   }
