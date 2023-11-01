@@ -1,3 +1,7 @@
+import 'dart:ffi';
+
+import 'package:flutter/foundation.dart';
+import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -16,6 +20,7 @@ class Article {
     String html = "<empty>";
 
     final response = await http.get(Uri.parse(detailsUrl));
+
     if (response.statusCode == 200) {
       html = response.body;
     }
@@ -28,9 +33,15 @@ class Article {
     return _html!;
   }
 
-  Future<String> contents() async {
+  Future<Document> _document() async {
     final html = await this.html();
-    final document = parse(html);
+    final document = await compute(parse, html);
+
+    return document;
+  }
+
+  Future<String> contents() async {
+    final document = await _document();
     final textBlocks = document.querySelectorAll(
         '#main-content > article > [data-component=text-block]');
     final contents = textBlocks.map((e) => e.text).join("\n\n");
@@ -39,8 +50,7 @@ class Article {
   }
 
   Future<String> featureImageUrl() async {
-    final html = await this.html();
-    final document = parse(html);
+    final document = await _document();
     final featureImageBlock = document
         .querySelectorAll(
             '#main-content > article > [data-component=image-block] img')
