@@ -1,6 +1,5 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
+
 import '../article.dart';
 
 const padding = 16.0;

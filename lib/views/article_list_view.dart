@@ -57,15 +57,16 @@ class _ArticleListViewState extends State<ArticleListView> {
   }
 
   Widget buildListViewForArticles(BuildContext context) {
+    // TODO: Move styling to theme
+    const publicationDateStyle = TextStyle(
+        fontStyle: FontStyle.italic, fontSize: 12.0, color: Colors.black45);
+
     return ListView.builder(
       itemCount: _articles.length,
       itemBuilder: (context, index) {
         final articleWithFeatureImage = _articles[index];
         final article = articleWithFeatureImage.article;
         final featureImageUrl = articleWithFeatureImage.featureImageUrl;
-
-        final titleStyle = const TextStyle(fontWeight: FontWeight.bold)
-            .merge(Theme.of(context).listTileTheme.titleTextStyle);
 
         final imageBuilder = FutureBuilder<String>(
             future: featureImageUrl,
@@ -93,18 +94,20 @@ class _ArticleListViewState extends State<ArticleListView> {
             });
 
         return ListTile(
+          isThreeLine: true,
           leading: SizedBox(
             width: leadingImageWidth,
             height: leadingImageHeight,
             child: FittedBox(fit: BoxFit.fill, child: imageBuilder),
           ),
-          isThreeLine: true,
-          title: Text(
-            article.title,
-            style: titleStyle,
+          title: Text(article.title),
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(article.summary),
+              Text(article.publicationDate, style: publicationDateStyle)
+            ],
           ),
-          subtitle: Text(article.summary,
-              style: Theme.of(context).listTileTheme.subtitleTextStyle),
           onTap: () {
             Navigator.push(
                 context,

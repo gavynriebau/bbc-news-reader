@@ -13,4 +13,13 @@ final themeData = ThemeData(
       foregroundColor: Colors.white,
     ),
     tabBarTheme: const TabBarTheme(
-        labelColor: Colors.white, unselectedLabelColor: Colors.white));
+        labelColor: Colors.white,
+        unselectedLabelColor: Colors.white),
+    listTileTheme: const ListTileThemeData(
+        titleTextStyle: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold),
+        subtitleTextStyle: TextStyle(
+          color: Colors.black87,
+          fontSize: 12.0
+        )));

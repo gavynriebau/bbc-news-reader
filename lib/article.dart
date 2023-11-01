@@ -5,10 +5,11 @@ class Article {
   final String title;
   final String summary;
   final String detailsUrl;
+  final String publicationDate;
   Future<String>? _html;
 
   Article(
-      {required this.title, required this.summary, required this.detailsUrl});
+      {required this.title, required this.summary, required this.detailsUrl, required this.publicationDate });
 
   Future<String> _fetchHtml() async {
     String html = "<empty>";

@@ -23,14 +23,18 @@ class ArticleFetcher {
       final elements = document.querySelectorAll('channel > item');
 
       // Title and subtitle are wrapped in a CDATA tag.
-      RegExp cdataRegex = RegExp(r'<!\[CDATA\[(.*)\]\]>');
+      RegExp cdataRegex = RegExp(r'.*\[CDATA\[(.*)\]\].*');
 
       for (var element in elements) {
-        final titleRaw = element.querySelector('title')?.text;
-        final subtitleRaw = element.querySelector('description')?.text;
+        final titleRaw = element.querySelector('title')?.nodes.first.text;
+        final subtitleRaw = element.querySelector('description')?.nodes.first.text;
         final url = element.querySelector('guid')?.text;
+        final pubDate = element.querySelector('pubDate')?.text;
 
-        if (titleRaw == null || subtitleRaw == null || url == null) {
+        if (titleRaw == null ||
+            subtitleRaw == null ||
+            url == null ||
+            pubDate == null) {
           developer.log(
               "Failed to parse document as it was missing a required element");
           continue;
@@ -39,7 +43,7 @@ class ArticleFetcher {
         final titleMatch = cdataRegex.firstMatch(titleRaw);
         final title = titleMatch?.group(1);
 
-        final subtitleMatch = cdataRegex.firstMatch(titleRaw);
+        final subtitleMatch = cdataRegex.firstMatch(subtitleRaw);
         final subtitle = subtitleMatch?.group(1);
 
         if (title == null || subtitle == null) {
@@ -49,7 +53,10 @@ class ArticleFetcher {
         }
 
         final article = Article(
-            title: title, summary: subtitle, detailsUrl: url);
+            title: title,
+            summary: subtitle,
+            detailsUrl: url,
+            publicationDate: pubDate);
 
         articles.add(article);
       }
@@ -57,5 +64,4 @@ class ArticleFetcher {
 
     return articles;
   }
-
 }
