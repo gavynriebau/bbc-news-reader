@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
         appBar: AppBar(
           title: const Text(appTitle),
           bottom:
-              TabBar(tabs: [...tabDetails.map((e) => Tab(text: e.tabTitle))]),
+              TabBar(tabs: [...tabDetails.map((e) => Tab(text: e.title))], isScrollable: true),
         ),
         body: TabBarView(children: [
           ...tabDetails.map((e) => ArticleListView(rssUrl: e.rssUrl))

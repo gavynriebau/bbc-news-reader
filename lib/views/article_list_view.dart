@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
-import 'package:transparent_image/transparent_image.dart';
 
 import '../article.dart';
 import '../article_fetcher.dart';
 import '../pages/details_page.dart';
+
+const leadingImageWidth = 100.0;
+const leadingImageHeight = 100.0;
 
 class ArticleWithFeatureImage {
   final Article article;
@@ -36,12 +38,16 @@ class _ArticleListViewState extends State<ArticleListView> {
 
   Future<void> populateArticles() async {
     final articles = await articleFetcher.fetchFromRssFeed(widget.rssUrl);
-    final articlesWithFeatureImages = articles.map((e) {
-      return ArticleWithFeatureImage(
-          article: e, featureImageUrl: e.featureImageUrl());
-    });
-    final numArticles = articles.length;
 
+    if (!mounted) {
+      return;
+    }
+
+    final articlesWithFeatureImages = articles.map((e) =>
+        ArticleWithFeatureImage(
+            article: e, featureImageUrl: e.featureImageUrl()));
+
+    final numArticles = articles.length;
     developer.log("Fetched $numArticles articles");
 
     setState(() {
@@ -68,37 +74,29 @@ class _ArticleListViewState extends State<ArticleListView> {
                 return const Text("Failed");
               }
 
-              final placeholderImage =
-                  Image.asset('assets/loading_placeholder.jpeg');
+              final placeholderImage = Image.asset(
+                  'assets/loading_placeholder.jpeg',
+                  fit: BoxFit.fill);
 
               final imageUrl = snapshot.data ?? "";
               if (imageUrl.isEmpty) {
-                // return const Placeholder();
                 return placeholderImage;
               }
 
               return FadeInImage.assetNetwork(
                   placeholder: 'assets/loading_placeholder.jpeg',
                   image: imageUrl,
-                  width: 100,
-                  height: 100,
+                  width: leadingImageWidth,
+                  height: leadingImageHeight,
+                  fit: BoxFit.fill,
                   placeholderFit: BoxFit.fill);
-
-              //   return FadeInImage.memoryNetwork(
-              //       placeholder: kTransparentImage,
-              //       image: imageUrl,
-              //       width: 100,
-              //       height: 100,
-              //       repeat: ImageRepeat.repeat,
-              //       );
             });
 
         return ListTile(
-          // leading: imageBuilder,
           leading: SizedBox(
-            width: 100,
-            height: 100,
-            child: Center(child: imageBuilder),
+            width: leadingImageWidth,
+            height: leadingImageHeight,
+            child: FittedBox(fit: BoxFit.fill, child: imageBuilder),
           ),
           isThreeLine: true,
           title: Text(

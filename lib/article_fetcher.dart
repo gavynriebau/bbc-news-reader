@@ -1,6 +1,5 @@
 import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:html/parser.dart';
 
 import 'article.dart';
@@ -57,29 +56,6 @@ class ArticleFetcher {
     }
 
     return articles;
-  }
-
-  Future<String> contents(Article article) async {
-    var contents = "<empty>";
-
-    final url = article.detailsUrl;
-    developer.log("Fetching from url = $url");
-
-    final response = await http.get(Uri.parse(url));
-
-    final statusCode = response.statusCode;
-    developer.log("response.statusCode = $statusCode");
-
-    if (statusCode == 200) {
-      var document = parse(response.body);
-      var elements = document.querySelectorAll(
-          '#main-content > article > [data-component=text-block]');
-      contents = elements.map((e) => e.text).join("\n\n");
-      //print(document.outerHtml);
-      developer.log("contents = $contents");
-    }
-
-    return contents;
   }
 
 }
