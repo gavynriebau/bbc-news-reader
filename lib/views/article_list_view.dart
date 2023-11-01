@@ -47,6 +47,11 @@ class _ArticleListViewState extends State<ArticleListView> {
         ArticleWithFeatureImage(
             article: e, featureImageUrl: e.featureImageUrl()));
 
+    articles.sort((a, b) => b
+        .publicationDateTime()
+        .millisecondsSinceEpoch
+        .compareTo(a.publicationDateTime().millisecondsSinceEpoch));
+
     final numArticles = articles.length;
     developer.log("Fetched $numArticles articles");
 
@@ -105,7 +110,7 @@ class _ArticleListViewState extends State<ArticleListView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(article.summary),
-              Text(article.publicationDate, style: publicationDateStyle)
+              Text(article.publicationDuration(), style: publicationDateStyle)
             ],
           ),
           onTap: () {

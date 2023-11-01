@@ -38,6 +38,7 @@ dependencies:
   http: ^1.1.0
   html: ^0.15.4
   transparent_image: ^2.0.1
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:

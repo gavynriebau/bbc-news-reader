@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart';
+import 'package:intl/intl.dart';
 
 import 'article.dart';
 
