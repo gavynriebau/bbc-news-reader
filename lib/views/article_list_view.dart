@@ -68,18 +68,29 @@ class _ArticleListViewState extends State<ArticleListView> {
                 return const Text("Failed");
               }
 
+              final placeholderImage =
+                  Image.asset('assets/loading_placeholder.jpeg');
+
               final imageUrl = snapshot.data ?? "";
               if (imageUrl.isEmpty) {
-                return const Placeholder();
+                // return const Placeholder();
+                return placeholderImage;
               }
 
-              return FadeInImage.memoryNetwork(
-                  placeholder: kTransparentImage,
+              return FadeInImage.assetNetwork(
+                  placeholder: 'assets/loading_placeholder.jpeg',
                   image: imageUrl,
                   width: 100,
                   height: 100,
-                  repeat: ImageRepeat.repeat,
-                  );
+                  placeholderFit: BoxFit.fill);
+
+              //   return FadeInImage.memoryNetwork(
+              //       placeholder: kTransparentImage,
+              //       image: imageUrl,
+              //       width: 100,
+              //       height: 100,
+              //       repeat: ImageRepeat.repeat,
+              //       );
             });
 
         return ListTile(
