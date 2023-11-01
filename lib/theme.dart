@@ -18,8 +18,9 @@ final themeData = ThemeData(
     listTileTheme: const ListTileThemeData(
         titleTextStyle: TextStyle(
           color: Colors.black,
+          fontSize: 16.0,
           fontWeight: FontWeight.bold),
         subtitleTextStyle: TextStyle(
           color: Colors.black87,
-          fontSize: 12.0
+          fontSize: 14.0
         )));
