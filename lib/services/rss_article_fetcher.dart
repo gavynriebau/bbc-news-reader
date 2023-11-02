@@ -89,7 +89,7 @@ class RssArticleFetcher implements ArticleFetcher {
 
   @override
   Future<String> featureImageUrl(Article article) async {
-    final document = await _document(article);
+    final document = await this.document(article);
     final featureImageBlock = document
         .querySelectorAll(
             '#main-content > article > [data-component=image-block] img')
@@ -100,12 +100,20 @@ class RssArticleFetcher implements ArticleFetcher {
 
   @override
   Future<String> contents(Article article) async {
-    final document = await _document(article);
+    final document = await this.document(article);
     final textBlocks = document.querySelectorAll(
         '#main-content > article > [data-component=text-block]');
     final contents = textBlocks.map((e) => e.text).join("\n\n");
 
     return contents;
+  }
+
+  @override
+  Future<Document> document(Article article) async {
+    final html = await _fetchHtml(article);
+    final document = await compute(parse, html);
+
+    return document;
   }
 
   Future<String> _fetchHtml(Article article) async {
@@ -118,12 +126,5 @@ class RssArticleFetcher implements ArticleFetcher {
     }
 
     return html;
-  }
-
-  Future<Document> _document(Article article) async {
-    final html = await _fetchHtml(article);
-    final document = await compute(parse, html);
-
-    return document;
   }
 }
