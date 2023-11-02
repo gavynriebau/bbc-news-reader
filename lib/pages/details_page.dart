@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kiwi/kiwi.dart';
 
@@ -20,7 +21,7 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   bool _loading = true;
   String _contents = "";
-  String _imageUrl = "";
+  late Uint8List _imageBytes;
 
   final articleFetcher = container.resolve<ArticleFetcher>();
 
@@ -32,10 +33,10 @@ class _DetailsPageState extends State<DetailsPage> {
 
   void fetchArticleContents() async {
     final contents = await articleFetcher.contents(widget.article);
-    final imageUrl = await articleFetcher.featureImageUrl(widget.article);
+    final imageBytes = await articleFetcher.featureImageBytes(widget.article);
     setState(() {
       _contents = contents;
-      _imageUrl = imageUrl;
+      _imageBytes = imageBytes;
       _loading = false;
     });
   }
@@ -53,11 +54,11 @@ class _DetailsPageState extends State<DetailsPage> {
       return const CircularProgressIndicator();
     }
 
-    if (_imageUrl.isEmpty) {
+    if (_imageBytes.isEmpty) {
       return null;
     }
 
-    return Image.network(_imageUrl, alignment: Alignment.topCenter);
+    return Image.memory(_imageBytes, alignment: Alignment.topCenter);
   }
 
   @override
