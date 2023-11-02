@@ -8,6 +8,8 @@ import '../article.dart';
 import 'article_fetcher.dart';
 
 class RssArticleFetcher implements ArticleFetcher {
+  final Map<String, Future<Document>> _cacheArticleUrlToDocument = {};
+
   @override
   Future<List<Article>> fetchFromRssFeed(String rssUrl) async {
     developer.log("Fetching articles from RSS feed '$rssUrl'...");
@@ -109,10 +111,17 @@ class RssArticleFetcher implements ArticleFetcher {
   }
 
   Future<Document> _document(Article article) async {
-    final html = await _fetchHtml(article);
-    final document = await compute(parse, html);
+    final articleUrl = article.detailsUrl;
 
-    return document;
+    final document =
+        _cacheArticleUrlToDocument.putIfAbsent(articleUrl, () async {
+      final html = await _fetchHtml(article);
+      final document = compute(parse, html);
+
+      return document;
+    });
+
+    return await document;
   }
 
   Future<String> _fetchHtml(Article article) async {
