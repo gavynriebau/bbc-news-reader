@@ -1,15 +1,18 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:kiwi/kiwi.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'dart:developer' as developer;
 
 import '../article.dart';
-import '../article_fetcher.dart';
 import '../constants.dart';
 import '../pages/details_page.dart';
+import '../services/article_fetcher.dart';
 import '../theme.dart';
 import '../utils.dart';
+
+KiwiContainer container = KiwiContainer();
 
 class ArticleWithFeatureImage {
   final Article article;
@@ -31,7 +34,7 @@ class ArticleListView extends StatefulWidget {
 class _ArticleListViewState extends State<ArticleListView> {
   bool _loading = true;
   final _articles = <ArticleWithFeatureImage>[];
-  final articleFetcher = ArticleFetcher();
+  final articleFetcher = container.resolve<ArticleFetcher>();
 
   @override
   void initState() {

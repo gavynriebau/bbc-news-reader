@@ -2,9 +2,12 @@ import 'dart:developer' as developer;
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart';
 
-import 'article.dart';
+import '../article.dart';
+import 'article_fetcher.dart';
 
-class ArticleFetcher {
+class RssArticleFetcher implements ArticleFetcher {
+  
+  @override
   Future<List<Article>> fetchFromRssFeed(String rssUrl) async {
     developer.log("Fetching articles from RSS feed '$rssUrl'...");
 
