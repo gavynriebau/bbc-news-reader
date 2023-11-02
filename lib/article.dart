@@ -57,6 +57,22 @@ class Article {
     return featureImageBlock?.attributes["src"] ?? "";
   }
 
+  Future<Uint8List> featureImageBytes() async {
+    final featureImageUrl = await this.featureImageUrl();
+
+    if (featureImageUrl.isEmpty) {
+      return Uint8List(0);
+    }
+
+    final response = await http.get(Uri.parse(featureImageUrl));
+
+    if (response.statusCode != 200) {
+      return Uint8List(0);
+    }
+
+    return response.bodyBytes;
+  }
+
   DateTime publicationDateTime() {
     final format = DateFormat("EEE, dd MMM y H:m:s 'GMT'");
     final dateTime = format.parse(publicationDate);

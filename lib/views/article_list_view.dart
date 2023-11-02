@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'dart:developer' as developer;
@@ -10,10 +12,10 @@ import '../theme.dart';
 
 class ArticleWithFeatureImage {
   final Article article;
-  final Future<String> featureImageUrl;
+  final Future<Uint8List> featureImageBytes;
 
   ArticleWithFeatureImage(
-      {required this.article, required this.featureImageUrl});
+      {required this.article, required this.featureImageBytes});
 }
 
 class ArticleListView extends StatefulWidget {
@@ -45,7 +47,7 @@ class _ArticleListViewState extends State<ArticleListView> {
 
     final articlesWithFeatureImages = articles.map((e) =>
         ArticleWithFeatureImage(
-            article: e, featureImageUrl: e.featureImageUrl()));
+            article: e, featureImageBytes: e.featureImageBytes()));
 
     articles.sort((a, b) => b
         .publicationDateTime()
@@ -76,43 +78,47 @@ class _ArticleListViewState extends State<ArticleListView> {
       itemBuilder: (context, index) {
         final articleWithFeatureImage = _articles[index];
         final article = articleWithFeatureImage.article;
-        final featureImageUrl = articleWithFeatureImage.featureImageUrl;
+        final featureImageBytes = articleWithFeatureImage.featureImageBytes;
 
-        final imageBuilder = FutureBuilder<String>(
-            future: featureImageUrl,
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+        final imageBuilder = FutureBuilder<Uint8List>(
+            future: featureImageBytes,
+            builder: (BuildContext context, AsyncSnapshot<Uint8List> snapshot) {
               if (snapshot.hasError) {
                 return const Text("Failed");
               }
 
               final showSkeleton = snapshot.data == null;
 
-              if (showSkeleton) {
-                return Skeletonizer(
-                    child: Container(
-                  width: leadingImageWidth,
-                  height: leadingImageHeight,
-                  color: Colors.black,
-                ));
-              }
-
-              final imageUrl = snapshot.data ?? "";
-
-              if (imageUrl.isEmpty) {
-                return Container(
-                  width: leadingImageWidth,
-                  height: leadingImageHeight,
-                  color: const Color.fromARGB(255, 240, 240, 240),
-                  child: const Center(child: Text("No Image")),
-                );
-              }
-
-              return Image.network(
-                imageUrl,
+              final firstChild = Skeletonizer(
+                  child: Container(
                 width: leadingImageWidth,
                 height: leadingImageHeight,
-                fit: BoxFit.fill,
-              );
+                color: Colors.black,
+              ));
+
+              final imageBytes = snapshot.data ?? Uint8List(0);
+
+              final secondChild = imageBytes.isEmpty
+                  ? Container(
+                      width: leadingImageWidth,
+                      height: leadingImageHeight,
+                      color: const Color.fromARGB(255, 240, 240, 240),
+                      child: const Center(child: Text("No Image")),
+                    )
+                  : Image.memory(
+                      imageBytes,
+                      width: leadingImageWidth,
+                      height: leadingImageHeight,
+                      fit: BoxFit.fill,
+                    );
+
+              return AnimatedCrossFade(
+                  firstChild: firstChild,
+                  secondChild: secondChild,
+                  crossFadeState: showSkeleton
+                      ? CrossFadeState.showFirst
+                      : CrossFadeState.showSecond,
+                  duration: const Duration(seconds: 1));
             });
 
         return ListTile(
