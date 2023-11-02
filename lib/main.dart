@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:kiwi/kiwi.dart';
 import 'constants.dart';
 import 'pages/home_page.dart';
+import 'services/old_file_cleanup.dart';
 import 'tab_details.dart';
 import 'theme.dart';
 
@@ -16,13 +17,24 @@ void main() {
 void registerDependencies() {
   KiwiContainer container = KiwiContainer();
 
-  //container.registerInstance<ArticleFetcher>((RssArticleFetcher());
   container.registerFactory<ArticleFetcher>(
       (c) => FileCachedArticleFetcher(articleFetcher: RssArticleFetcher()));
 }
 
-class UnofficialBbcApp extends StatelessWidget {
+class UnofficialBbcApp extends StatefulWidget {
   const UnofficialBbcApp({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _UnofficialBbcAppState();
+}
+
+class _UnofficialBbcAppState extends State<UnofficialBbcApp> {
+
+  @override
+  void initState() {
+    super.initState();
+    cleanOldCacheFiles();
+  }
 
   @override
   Widget build(BuildContext context) {
