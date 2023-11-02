@@ -9,6 +9,7 @@ import '../article_fetcher.dart';
 import '../constants.dart';
 import '../pages/details_page.dart';
 import '../theme.dart';
+import '../utils.dart';
 
 class ArticleWithFeatureImage {
   final Article article;
@@ -49,10 +50,10 @@ class _ArticleListViewState extends State<ArticleListView> {
         ArticleWithFeatureImage(
             article: e, featureImageBytes: e.featureImageBytes()));
 
-    articles.sort((a, b) => b
-        .publicationDateTime()
+    articles.sort((a, b) => parsePublicationDateToDateTime(b.publicationDate)
         .millisecondsSinceEpoch
-        .compareTo(a.publicationDateTime().millisecondsSinceEpoch));
+        .compareTo(parsePublicationDateToDateTime(a.publicationDate)
+            .millisecondsSinceEpoch));
 
     final numArticles = articles.length;
     developer.log("Fetched $numArticles articles");
@@ -133,7 +134,10 @@ class _ArticleListViewState extends State<ArticleListView> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(article.summary),
-              Text(article.publicationDuration(), style: publicationDateStyle)
+              Text(
+                  dateTimeToDurationFromNow(
+                      parsePublicationDateToDateTime(article.publicationDate)),
+                  style: publicationDateStyle)
             ],
           ),
           onTap: () {
