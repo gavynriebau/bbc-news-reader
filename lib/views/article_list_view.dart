@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'dart:developer' as developer;
 
 import '../article.dart';
@@ -84,22 +85,34 @@ class _ArticleListViewState extends State<ArticleListView> {
                 return const Text("Failed");
               }
 
-              final placeholderImage = Image.asset(
-                  'assets/loading_placeholder.jpeg',
-                  fit: BoxFit.fill);
+              final showSkeleton = snapshot.data == null;
 
-              final imageUrl = snapshot.data ?? "";
-              if (imageUrl.isEmpty) {
-                return placeholderImage;
-              }
-
-              return FadeInImage.assetNetwork(
-                  placeholder: 'assets/loading_placeholder.jpeg',
-                  image: imageUrl,
+              if (showSkeleton) {
+                return Skeletonizer(
+                    child: Container(
                   width: leadingImageWidth,
                   height: leadingImageHeight,
-                  fit: BoxFit.fill,
-                  placeholderFit: BoxFit.fill);
+                  color: Colors.black,
+                ));
+              }
+
+              final imageUrl = snapshot.data ?? "";
+
+              if (imageUrl.isEmpty) {
+                return Container(
+                  width: leadingImageWidth,
+                  height: leadingImageHeight,
+                  color: const Color.fromARGB(255, 240, 240, 240),
+                  child: const Center(child: Text("No Image")),
+                );
+              }
+
+              return Image.network(
+                imageUrl,
+                width: leadingImageWidth,
+                height: leadingImageHeight,
+                fit: BoxFit.fill,
+              );
             });
 
         return ListTile(
