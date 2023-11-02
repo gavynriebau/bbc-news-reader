@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:kiwi/kiwi.dart';
 
 import '../article.dart';
+import '../services/article_fetcher.dart';
 
 const padding = 16.0;
+
+KiwiContainer container = KiwiContainer();
 
 class DetailsPage extends StatefulWidget {
   const DetailsPage({super.key, required this.article});
@@ -18,6 +22,8 @@ class _DetailsPageState extends State<DetailsPage> {
   String _contents = "";
   String _imageUrl = "";
 
+  final articleFetcher = container.resolve<ArticleFetcher>();
+
   @override
   void initState() {
     super.initState();
@@ -25,8 +31,8 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   void fetchArticleContents() async {
-    final contents = await widget.article.contents();
-    final imageUrl = await widget.article.featureImageUrl();
+    final contents = await articleFetcher.contents(widget.article);
+    final imageUrl = await articleFetcher.featureImageUrl(widget.article);
     setState(() {
       _contents = contents;
       _imageUrl = imageUrl;

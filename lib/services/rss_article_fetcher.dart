@@ -1,4 +1,6 @@
 import 'dart:developer' as developer;
+import 'package:flutter/foundation.dart';
+import 'package:html/dom.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart';
 
@@ -6,7 +8,6 @@ import '../article.dart';
 import 'article_fetcher.dart';
 
 class RssArticleFetcher implements ArticleFetcher {
-  
   @override
   Future<List<Article>> fetchFromRssFeed(String rssUrl) async {
     developer.log("Fetching articles from RSS feed '$rssUrl'...");
@@ -30,7 +31,8 @@ class RssArticleFetcher implements ArticleFetcher {
 
       for (var element in elements) {
         final titleRaw = element.querySelector('title')?.nodes.first.text;
-        final subtitleRaw = element.querySelector('description')?.nodes.first.text;
+        final subtitleRaw =
+            element.querySelector('description')?.nodes.first.text;
         final url = element.querySelector('guid')?.text;
         final pubDate = element.querySelector('pubDate')?.text;
 
@@ -66,5 +68,62 @@ class RssArticleFetcher implements ArticleFetcher {
     }
 
     return articles;
+  }
+
+  @override
+  Future<Uint8List> featureImageBytes(Article article) async {
+    final featureImageUrl = await this.featureImageUrl(article);
+
+    if (featureImageUrl.isEmpty) {
+      return Uint8List(0);
+    }
+
+    final response = await http.get(Uri.parse(featureImageUrl));
+
+    if (response.statusCode != 200) {
+      return Uint8List(0);
+    }
+
+    return response.bodyBytes;
+  }
+
+  @override
+  Future<String> featureImageUrl(Article article) async {
+    final document = await _document(article);
+    final featureImageBlock = document
+        .querySelectorAll(
+            '#main-content > article > [data-component=image-block] img')
+        .firstOrNull;
+
+    return featureImageBlock?.attributes["src"] ?? "";
+  }
+
+  @override
+  Future<String> contents(Article article) async {
+    final document = await _document(article);
+    final textBlocks = document.querySelectorAll(
+        '#main-content > article > [data-component=text-block]');
+    final contents = textBlocks.map((e) => e.text).join("\n\n");
+
+    return contents;
+  }
+
+  Future<String> _fetchHtml(Article article) async {
+    String html = "<empty>";
+
+    final response = await http.get(Uri.parse(article.detailsUrl));
+
+    if (response.statusCode == 200) {
+      html = response.body;
+    }
+
+    return html;
+  }
+
+  Future<Document> _document(Article article) async {
+    final html = await _fetchHtml(article);
+    final document = await compute(parse, html);
+
+    return document;
   }
 }

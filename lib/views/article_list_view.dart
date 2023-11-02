@@ -51,7 +51,7 @@ class _ArticleListViewState extends State<ArticleListView> {
 
     final articlesWithFeatureImages = articles.map((e) =>
         ArticleWithFeatureImage(
-            article: e, featureImageBytes: e.featureImageBytes()));
+            article: e, featureImageBytes: articleFetcher.featureImageBytes(e)));
 
     articles.sort((a, b) => parsePublicationDateToDateTime(b.publicationDate)
         .millisecondsSinceEpoch
