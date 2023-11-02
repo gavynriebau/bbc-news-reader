@@ -1,4 +1,5 @@
 import 'package:bbc_mobile/services/article_fetcher.dart';
+import 'package:bbc_mobile/services/file_cached_article_fetcher.dart';
 import 'package:bbc_mobile/services/rss_article_fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:kiwi/kiwi.dart';
@@ -15,7 +16,9 @@ void main() {
 void registerDependencies() {
   KiwiContainer container = KiwiContainer();
 
-  container.registerInstance<ArticleFetcher>(RssArticleFetcher());
+  //container.registerInstance<ArticleFetcher>((RssArticleFetcher());
+  container.registerFactory<ArticleFetcher>(
+      (c) => FileCachedArticleFetcher(articleFetcher: RssArticleFetcher()));
 }
 
 class UnofficialBbcApp extends StatelessWidget {
