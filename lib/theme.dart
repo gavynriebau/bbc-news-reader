@@ -17,8 +17,8 @@ final themeData = ThemeData(
     foregroundColor: colorScheme.background,
   ),
   tabBarTheme: TabBarTheme(
-      labelColor: colorScheme.inversePrimary,
-      unselectedLabelColor: colorScheme.inversePrimary
+      labelColor: colorScheme.onPrimary,
+      unselectedLabelColor: colorScheme.onPrimary
   ),
   listTileTheme: ListTileThemeData(
       titleTextStyle: TextStyle(
