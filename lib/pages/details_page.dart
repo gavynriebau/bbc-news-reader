@@ -7,6 +7,7 @@ import '../article.dart';
 import '../services/article_fetcher.dart';
 
 const padding = 16.0;
+const paddingEdgeInsets = EdgeInsets.fromLTRB(padding, padding, padding, 0);
 
 KiwiContainer container = KiwiContainer();
 
@@ -81,16 +82,14 @@ class _DetailsPageState extends State<DetailsPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: padding),
-                  child: Text(widget.article.title,
-                      style: Theme.of(context).textTheme.headlineSmall),
-                )),
-            buildImage(context),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: padding),
+              margin: paddingEdgeInsets,
+              child: Text(widget.article.title,
+                  style: Theme.of(context).textTheme.headlineSmall),
+            ),
+            Padding(padding: paddingEdgeInsets, child: buildImage(context)),
+            Container(
+              margin: paddingEdgeInsets,
               child: Text(widget.article.summary,
                   style: Theme.of(context).textTheme.titleMedium),
             ),
