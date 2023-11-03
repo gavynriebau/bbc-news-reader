@@ -109,13 +109,29 @@ class RssArticleFetcher implements ArticleFetcher {
   }
 
   @override
-  Future<String> contents(Article article) async {
-    final document = await _document(article);
-    final textBlocks = document.querySelectorAll(
-        '#main-content > article > [data-component=text-block]');
-    final contents = textBlocks.map((e) => e.text).join("\n\n");
+  Future<List<ContentItem>> contents(Article article) async {
+    final contentItems = List<ContentItem>.empty(growable: true);
 
-    return contents;
+    final document = await _document(article);
+    final blocks = document.querySelectorAll(
+        '#main-content > article > [data-component]');
+
+
+    for (var block in blocks) {
+      final componentType = block.attributes['data-component'];
+
+      if (componentType == "text-block") {
+        contentItems.add(ContentItem(contentType: ContentType.text, contents: block.text));
+      }
+
+      // if (componentType == "image-block") {
+      //   contentItems.add(ContentItem(contentType: ContentType.image, contents: block.text));
+      // }
+
+      // TODO: Image type
+    }
+
+    return contentItems;
   }
 
   Future<Document> _document(Article article) async {

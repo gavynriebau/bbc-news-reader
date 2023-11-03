@@ -23,7 +23,7 @@ class DetailsPage extends StatefulWidget {
 
 class _DetailsPageState extends State<DetailsPage> {
   bool _loading = true;
-  String _contents = "";
+  List<ContentItem> _contents = List.empty();
   Uint8List _imageBytes = Uint8List(0);
 
   final articleFetcher = container.resolve<ArticleFetcher>();
@@ -44,12 +44,19 @@ class _DetailsPageState extends State<DetailsPage> {
     });
   }
 
-  Widget buildContents(BuildContext context) {
+  List<Widget> buildContents(BuildContext context) {
     if (_loading) {
-      return const CircularProgressIndicator();
+      return [
+        Container(
+            margin: const EdgeInsets.all(padding),
+            child: const CircularProgressIndicator())
+      ];
     }
 
-    return Text(_contents);
+    return _contents
+        .map((x) => Container(
+            margin: const EdgeInsets.all(padding), child: Text(x.contents)))
+        .toList();
   }
 
   Widget? buildImage(BuildContext context) {
@@ -101,9 +108,7 @@ class _DetailsPageState extends State<DetailsPage> {
               child: Text(widget.article.summary,
                   style: Theme.of(context).textTheme.titleMedium),
             ),
-            Container(
-                margin: const EdgeInsets.all(padding),
-                child: buildContents(context))
+            ...buildContents(context),
           ].nonNulls.toList(),
         ),
       ),

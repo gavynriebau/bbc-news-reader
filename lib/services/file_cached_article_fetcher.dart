@@ -10,28 +10,35 @@ import 'article_fetcher.dart';
 class FileCachedArticleFetcher implements ArticleFetcher {
   final ArticleFetcher articleFetcher;
 
-  FileCachedArticleFetcher({ required this.articleFetcher });
+  FileCachedArticleFetcher({required this.articleFetcher});
 
   Future<File> _getCacheFile(Article article, String suffix) async {
     final Directory cacheDirectory = await getApplicationCacheDirectory();
     final articleSha = _sha1(article);
-    final cacheFilePath = [cacheDirectory.absolute.path, "${articleSha}_$suffix"].join('/');
+    final cacheFilePath =
+        [cacheDirectory.absolute.path, "${articleSha}_$suffix"].join('/');
     final cacheFile = File(cacheFilePath);
 
     return cacheFile;
   }
 
   @override
-  Future<String> contents(Article article) async {
+  Future<List<ContentItem>> contents(Article article) async {
     final cacheFile = await _getCacheFile(article, "contents");
 
     if (await cacheFile.exists()) {
-      return await cacheFile.readAsString();
+      final json = await cacheFile.readAsString();
+      final items = jsonDecode(json) as List<dynamic>;
+      return items
+          .cast<Map<String, dynamic>>()
+          .map((e) => ContentItem.fromJson(e))
+          .toList();
     }
 
     final contents = await articleFetcher.contents(article);
     if (contents.isNotEmpty) {
-      await cacheFile.writeAsString(contents, flush: true);  
+      final json = jsonEncode(contents);
+      await cacheFile.writeAsString(json, flush: true);
     }
 
     return contents;
