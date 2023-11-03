@@ -51,7 +51,8 @@ class _ArticleListViewState extends State<ArticleListView> {
 
     final articlesWithFeatureImages = articles.map((e) =>
         ArticleWithFeatureImage(
-            article: e, featureImageBytes: articleFetcher.featureImageBytes(e)));
+            article: e,
+            featureImageBytes: articleFetcher.featureImageBytes(e)));
 
     articles.sort((a, b) => parsePublicationDateToDateTime(b.publicationDate)
         .millisecondsSinceEpoch
@@ -103,12 +104,10 @@ class _ArticleListViewState extends State<ArticleListView> {
               final imageBytes = snapshot.data ?? Uint8List(0);
 
               final secondChild = imageBytes.isEmpty
-                  ? Container(
+                  ? Image.asset("assets/no_image.jpg",
                       width: leadingImageWidth,
                       height: leadingImageHeight,
-                      color: const Color.fromARGB(255, 240, 240, 240),
-                      child: const Center(child: Text("No Image")),
-                    )
+                      fit: BoxFit.fill)
                   : Image.memory(
                       imageBytes,
                       width: leadingImageWidth,
