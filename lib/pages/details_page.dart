@@ -81,11 +81,13 @@ class _DetailsPageState extends State<DetailsPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: padding),
-              child: Text(widget.article.title,
-                  style: Theme.of(context).textTheme.titleLarge),
-            ),
+            Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: padding),
+                  child: Text(widget.article.title,
+                      style: Theme.of(context).textTheme.headlineSmall),
+                )),
             buildImage(context),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: padding),
