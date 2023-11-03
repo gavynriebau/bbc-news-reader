@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kiwi/kiwi.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 import '../article.dart';
 import '../services/article_fetcher.dart';
@@ -50,15 +51,25 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   Widget? buildImage(BuildContext context) {
+    Widget? child;
+
     if (_loading) {
-      return const CircularProgressIndicator();
+      child = Skeletonizer(
+          enabled: true,
+          child: Container(
+            width: 100.0,
+            height: 200.0,
+            color: Colors.white,
+          ));
+    } else if (_imageBytes.isNotEmpty) {
+      child = Image.memory(_imageBytes, alignment: Alignment.topCenter);
     }
 
-    if (_imageBytes.isEmpty) {
+    if (child == null) {
       return null;
     }
 
-    return Image.memory(_imageBytes, alignment: Alignment.topCenter);
+    return Row(children: [Expanded(child: child)]);
   }
 
   @override
