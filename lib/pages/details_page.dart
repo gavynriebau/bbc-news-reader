@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kiwi/kiwi.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../article.dart';
 import '../services/article_fetcher.dart';
@@ -78,6 +79,13 @@ class _DetailsPageState extends State<DetailsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Details"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Share.shareUri(Uri.parse(widget.article.detailsUrl));
+              },
+              icon: const Icon(Icons.share))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
