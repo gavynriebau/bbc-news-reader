@@ -2,17 +2,17 @@ import 'package:intl/intl.dart';
 
 DateTime parsePublicationDateToDateTime(String publicationDate) {
   final format = DateFormat("EEE, dd MMM y H:m:s 'GMT'");
-  final dateTime = format.parse(publicationDate);
+  final dateTime = format.parse(publicationDate, true);
 
   return dateTime;
 }
 
 /// Converts the publicationDate from a format such as "Sat, 28 Oct 2023 12:35:08 GMT" to
 /// a duration relative to now, e.g. "2 days 11 hours ago".
-String dateTimeToDurationFromNow(DateTime dateTime) {
-  final now = DateTime.now();
+String dateTimeToDurationFromNow(DateTime dateTimeUtc) {
+  final now = DateTime.now().toUtc();
 
-  Duration duration = now.difference(dateTime);
+  Duration duration = now.difference(dateTimeUtc);
 
   final parts = <String>[];
 
