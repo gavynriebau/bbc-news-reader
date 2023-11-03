@@ -21,7 +21,7 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   bool _loading = true;
   String _contents = "";
-  late Uint8List _imageBytes;
+  Uint8List _imageBytes = Uint8List(0);
 
   final articleFetcher = container.resolve<ArticleFetcher>();
 
