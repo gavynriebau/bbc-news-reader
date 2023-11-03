@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:html/parser.dart';
 
 import '../article.dart';
+import '../constants.dart';
 import 'article_fetcher.dart';
 
 class RssArticleFetcher implements ArticleFetcher {
@@ -92,10 +93,17 @@ class RssArticleFetcher implements ArticleFetcher {
   @override
   Future<String> featureImageUrl(Article article) async {
     final document = await _document(article);
+
     final featureImageBlock = document
         .querySelectorAll(
             '#main-content > article > [data-component=image-block] img')
-        .firstOrNull;
+        .cast<Element?>()
+        .firstWhere((Element? element) {
+          final heightAttr = element?.attributes["height"] ?? "0";
+          final height = int.tryParse(heightAttr) ?? 0;
+
+          return height >= minHeightForValidImages;
+        }, orElse: () => null);
 
     return featureImageBlock?.attributes["src"] ?? "";
   }
