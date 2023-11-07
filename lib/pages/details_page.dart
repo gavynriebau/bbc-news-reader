@@ -48,14 +48,26 @@ class _DetailsPageState extends State<DetailsPage> {
     if (_loading) {
       return [
         Container(
-            margin: const EdgeInsets.all(padding),
+            margin: paddingEdgeInsets,
             child: const CircularProgressIndicator())
       ];
     }
 
     return _contents
-        .map((x) => Container(
-            margin: const EdgeInsets.all(padding), child: Text(x.contents)))
+        .map((x) => switch (x.contentType) {
+              ContentType.text => Text(x.contents),
+              ContentType.image => Row(
+                  children: [
+                    Expanded(
+                        child: Image.network(
+                      x.contents,
+                      fit: BoxFit.fill,
+                    ))
+                  ],
+                ),
+            })
+        .map((e) => Container(margin: paddingEdgeInsets, child: e))
+        .nonNulls
         .toList();
   }
 
@@ -95,22 +107,24 @@ class _DetailsPageState extends State<DetailsPage> {
         ],
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              margin: paddingEdgeInsets,
-              child: Text(widget.article.title,
-                  style: Theme.of(context).textTheme.headlineSmall),
-            ),
-            Padding(padding: paddingEdgeInsets, child: buildImage(context)),
-            Container(
-              margin: paddingEdgeInsets,
-              child: Text(widget.article.summary,
-                  style: Theme.of(context).textTheme.titleMedium),
-            ),
-            ...buildContents(context),
-          ].nonNulls.toList(),
-        ),
+        child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, padding),
+            child: Column(
+              children: [
+                Container(
+                  margin: paddingEdgeInsets,
+                  child: Text(widget.article.title,
+                      style: Theme.of(context).textTheme.headlineSmall),
+                ),
+                // Padding(padding: paddingEdgeInsets, child: buildImage(context)),
+                Container(
+                  margin: paddingEdgeInsets,
+                  child: Text(widget.article.summary,
+                      style: Theme.of(context).textTheme.titleMedium),
+                ),
+                ...buildContents(context),
+              ].nonNulls.toList(),
+            )),
       ),
     );
   }

@@ -99,11 +99,11 @@ class RssArticleFetcher implements ArticleFetcher {
             '#main-content > article > [data-component=image-block] img')
         .cast<Element?>()
         .firstWhere((Element? element) {
-          final heightAttr = element?.attributes["height"] ?? "0";
-          final height = int.tryParse(heightAttr) ?? 0;
+      final heightAttr = element?.attributes["height"] ?? "0";
+      final height = int.tryParse(heightAttr) ?? 0;
 
-          return height >= minHeightForValidImages;
-        }, orElse: () => null);
+      return height >= minHeightForValidImages;
+    }, orElse: () => null);
 
     return featureImageBlock?.attributes["src"] ?? "";
   }
@@ -113,25 +113,48 @@ class RssArticleFetcher implements ArticleFetcher {
     final contentItems = List<ContentItem>.empty(growable: true);
 
     final document = await _document(article);
-    final blocks = document.querySelectorAll(
-        '#main-content > article > [data-component]');
-
+    final blocks =
+        document.querySelectorAll('#main-content > article > [data-component]');
 
     for (var block in blocks) {
       final componentType = block.attributes['data-component'];
 
       if (componentType == "text-block") {
-        contentItems.add(ContentItem(contentType: ContentType.text, contents: block.text));
+        contentItems.add(
+            ContentItem(contentType: ContentType.text, contents: block.text));
       }
 
-      // if (componentType == "image-block") {
-      //   contentItems.add(ContentItem(contentType: ContentType.image, contents: block.text));
-      // }
-
-      // TODO: Image type
+      if (componentType == "image-block") {
+        final img = await _getImageElement(block);
+        final src = img?.attributes["src"] ?? "";
+        if (src.isNotEmpty) {
+          final height = int.parse(img?.attributes["height"] ?? "0");
+          if (height >= minHeightForValidImages) {
+            developer.log("Added image-block with src: $src");
+            contentItems.add(
+                ContentItem(contentType: ContentType.image, contents: src));
+          }
+        }
+      }
     }
 
     return contentItems;
+  }
+
+  Future<Element?> _getImageElement(Element block) async {
+    Element? img = block.querySelector('picture > img');
+
+    if (img == null) {
+      final noScript = block.querySelector('noscript');
+      if (noScript != null) {
+        final html = noScript.innerHtml;
+        final document = await compute(parse, html);
+
+        img = document.querySelector('picture > img');
+      }
+    }
+
+    return img;
   }
 
   Future<Document> _document(Article article) async {
