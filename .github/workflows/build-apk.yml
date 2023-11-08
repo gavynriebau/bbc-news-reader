@@ -15,7 +15,6 @@ jobs:
     - uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.13.9'
-    - run: flutter build apk --release
-    - run: gh release create build/app/outputs/flutter-apk/app-release.apk
+    - run: ./scripts/release.sh
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
