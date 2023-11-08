@@ -48,14 +48,15 @@ class _DetailsPageState extends State<DetailsPage> {
     if (_loading) {
       return [
         Container(
-            margin: paddingEdgeInsets,
-            child: const CircularProgressIndicator())
+            margin: paddingEdgeInsets, child: const CircularProgressIndicator())
       ];
     }
 
     return _contents
         .map((x) => switch (x.contentType) {
-              ContentType.text => Text(x.contents),
+              ContentType.text => Row(
+                  children: [Expanded(child: Text(x.contents))],
+                ),
               ContentType.image => Row(
                   children: [
                     Expanded(
@@ -65,6 +66,16 @@ class _DetailsPageState extends State<DetailsPage> {
                     ))
                   ],
                 ),
+              ContentType.byline => Row(
+                  children: [
+                    Expanded(
+                        child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children:
+                          x.contents.split('\n').map((e) => Text(e)).toList(),
+                    ))
+                  ],
+                )
             })
         .map((e) => Container(margin: paddingEdgeInsets, child: e))
         .nonNulls

@@ -136,6 +136,15 @@ class RssArticleFetcher implements ArticleFetcher {
           }
         }
       }
+
+      if (componentType == "byline-block") {
+        final divs = block.querySelectorAll('div');
+        final innerMostDivs = divs.where((e) => e.children.isEmpty);
+        final innerMostText = innerMostDivs.map((e) => e.text.trim()).where((e) => e.isNotEmpty);
+        final text = innerMostText.join("\n");
+        developer.log("Adding byline-block with text: $text");
+        contentItems.add(ContentItem(contentType: ContentType.byline, contents: text));
+      }
     }
 
     return contentItems;

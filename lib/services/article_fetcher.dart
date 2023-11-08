@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../article.dart';
 
-enum ContentType { text, image }
+enum ContentType { text, image, byline }
 
 class ContentItem {
   final ContentType contentType;
