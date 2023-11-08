@@ -1,6 +1,6 @@
 {
-    "name": "bbc_mobile",
-    "short_name": "bbc_mobile",
+    "name": "simple_bbc_news_reader",
+    "short_name": "simple_bbc_news_reader",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

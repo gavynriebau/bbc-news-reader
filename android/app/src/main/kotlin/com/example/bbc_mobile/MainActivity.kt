@@ -1,4 +1,4 @@
-package com.example.bbc_mobile
+package com.example.simple_bbc_news_reader
 
 import io.flutter.embedding.android.FlutterActivity
 

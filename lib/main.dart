@@ -1,11 +1,11 @@
-import 'package:bbc_mobile/services/article_fetcher.dart';
-import 'package:bbc_mobile/services/file_cached_article_fetcher.dart';
-import 'package:bbc_mobile/services/rss_article_fetcher.dart';
 import 'package:flutter/material.dart';
 import 'package:kiwi/kiwi.dart';
 import 'constants.dart';
 import 'pages/home_page.dart';
+import 'services/article_fetcher.dart';
+import 'services/file_cached_article_fetcher.dart';
 import 'services/old_file_cleanup.dart';
+import 'services/rss_article_fetcher.dart';
 import 'tab_details.dart';
 import 'theme.dart';
 
