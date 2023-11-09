@@ -128,7 +128,8 @@ class RssArticleFetcher implements ArticleFetcher {
         final img = await _getImageElement(block);
         final src = img?.attributes["src"] ?? "";
         if (src.isNotEmpty) {
-          final height = int.parse(img?.attributes["height"] ?? "0");
+          final heightText = img?.attributes["height"] ?? "0";
+          final height = int.tryParse(heightText) ?? 0;
           if (height >= minHeightForValidImages) {
             developer.log("Added image-block with src: $src");
             contentItems.add(
@@ -140,10 +141,12 @@ class RssArticleFetcher implements ArticleFetcher {
       if (componentType == "byline-block") {
         final divs = block.querySelectorAll('div');
         final innerMostDivs = divs.where((e) => e.children.isEmpty);
-        final innerMostText = innerMostDivs.map((e) => e.text.trim()).where((e) => e.isNotEmpty);
+        final innerMostText =
+            innerMostDivs.map((e) => e.text.trim()).where((e) => e.isNotEmpty);
         final text = innerMostText.join("\n");
         developer.log("Adding byline-block with text: $text");
-        contentItems.add(ContentItem(contentType: ContentType.byline, contents: text));
+        contentItems
+            .add(ContentItem(contentType: ContentType.byline, contents: text));
       }
     }
 
