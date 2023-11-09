@@ -36,8 +36,14 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   void fetchArticleContents() async {
-    final contents = await articleFetcher.contents(widget.article);
-    final imageBytes = await articleFetcher.featureImageBytes(widget.article);
+    final values = await Future.wait([
+      articleFetcher.contents(widget.article),
+      articleFetcher.featureImageBytes(widget.article)
+    ]);
+
+    final contents = values[0] as List<ContentItem>;
+    final imageBytes = values[1] as Uint8List;
+
     setState(() {
       _contents = contents;
       _imageBytes = imageBytes;
