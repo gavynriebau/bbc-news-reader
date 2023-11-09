@@ -51,15 +51,14 @@ class _DetailsPageState extends State<DetailsPage> {
     });
   }
 
-  List<Widget> buildContents(BuildContext context) {
+  Widget buildContents(BuildContext context) {
     if (_loading) {
-      return [
-        Container(
-            margin: paddingEdgeInsets, child: const CircularProgressIndicator())
-      ];
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
     }
 
-    return _contents
+    final contents = _contents
         .map((x) => switch (x.contentType) {
               ContentType.text => Container(
                   margin: paddingEdgeInsets,
@@ -92,6 +91,25 @@ class _DetailsPageState extends State<DetailsPage> {
             })
         .nonNulls
         .toList();
+
+    contents.insertAll(0, [
+      Container(
+        margin: paddingEdgeInsets,
+        child: Text(widget.article.title,
+            style: Theme.of(context).textTheme.headlineSmall),
+      ),
+      Container(
+        margin: paddingEdgeInsets,
+        child: Text(widget.article.summary,
+            style: Theme.of(context).textTheme.titleMedium),
+      ),
+    ]);
+
+    return SingleChildScrollView(
+      child: Padding(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, padding),
+          child: Column(children: contents.nonNulls.toList())),
+    );
   }
 
   List<Widget> _buildBylineWidgetsFromText(BuildContext context, String text) {
@@ -134,35 +152,16 @@ class _DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Details"),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Share.shareUri(Uri.parse(widget.article.detailsUrl));
-              },
-              icon: const Icon(Icons.share))
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, padding),
-            child: Column(
-              children: [
-                Container(
-                  margin: paddingEdgeInsets,
-                  child: Text(widget.article.title,
-                      style: Theme.of(context).textTheme.headlineSmall),
-                ),
-                Container(
-                  margin: paddingEdgeInsets,
-                  child: Text(widget.article.summary,
-                      style: Theme.of(context).textTheme.titleMedium),
-                ),
-                ...buildContents(context),
-              ].nonNulls.toList(),
-            )),
-      ),
-    );
+        appBar: AppBar(
+          title: const Text("Details"),
+          actions: [
+            IconButton(
+                onPressed: () {
+                  Share.shareUri(Uri.parse(widget.article.detailsUrl));
+                },
+                icon: const Icon(Icons.share))
+          ],
+        ),
+        body: buildContents(context));
   }
 }
