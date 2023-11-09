@@ -1,7 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:kiwi/kiwi.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../article.dart';
@@ -25,7 +23,6 @@ class DetailsPage extends StatefulWidget {
 class _DetailsPageState extends State<DetailsPage> {
   bool _loading = true;
   List<ContentItem> _contents = List.empty();
-  Uint8List _imageBytes = Uint8List(0);
 
   final articleFetcher = container.resolve<ArticleFetcher>();
 
@@ -36,17 +33,10 @@ class _DetailsPageState extends State<DetailsPage> {
   }
 
   void fetchArticleContents() async {
-    final values = await Future.wait([
-      articleFetcher.contents(widget.article),
-      articleFetcher.featureImageBytes(widget.article)
-    ]);
-
-    final contents = values[0] as List<ContentItem>;
-    final imageBytes = values[1] as Uint8List;
+    final contents = await articleFetcher.contents(widget.article);
 
     setState(() {
       _contents = contents;
-      _imageBytes = imageBytes;
       _loading = false;
     });
   }
@@ -125,28 +115,6 @@ class _DetailsPageState extends State<DetailsPage> {
     }
 
     return widgets;
-  }
-
-  Widget? buildImage(BuildContext context) {
-    Widget? child;
-
-    if (_loading) {
-      child = Skeletonizer(
-          enabled: true,
-          child: Container(
-            width: 100.0,
-            height: 200.0,
-            color: Colors.white,
-          ));
-    } else if (_imageBytes.isNotEmpty) {
-      child = Image.memory(_imageBytes, alignment: Alignment.topCenter);
-    }
-
-    if (child == null) {
-      return null;
-    }
-
-    return Row(children: [Expanded(child: child)]);
   }
 
   @override
