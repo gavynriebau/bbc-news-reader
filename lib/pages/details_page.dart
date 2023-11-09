@@ -53,7 +53,11 @@ class _DetailsPageState extends State<DetailsPage> {
               ContentType.text => Container(
                   margin: paddingEdgeInsets,
                   child: Row(
-                    children: [Expanded(child: Text(x.contents))],
+                    children: [
+                      Expanded(
+                          child: Text(x.contents,
+                              style: Theme.of(context).textTheme.bodyLarge))
+                    ],
                   )),
               ContentType.image => Container(
                   margin: paddingTopInsetOnly,
