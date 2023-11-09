@@ -72,7 +72,7 @@ class _DetailsPageState extends State<DetailsPage> {
                         child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children:
-                          x.contents.split('\n').map((e) => Text(e)).toList(),
+                          _buildBylineWidgetsFromText(context, x.contents),
                     ))
                   ],
                 )
@@ -80,6 +80,21 @@ class _DetailsPageState extends State<DetailsPage> {
         .map((e) => Container(margin: paddingEdgeInsets, child: e))
         .nonNulls
         .toList();
+  }
+
+  List<Widget> _buildBylineWidgetsFromText(BuildContext context, String text) {
+    final widgets = List<Widget>.empty(growable: true);
+
+    for (var (idx, val) in text.split('\n').indexed) {
+      final style = switch (idx) {
+        0 => Theme.of(context).textTheme.labelLarge,
+        _ => null
+      };
+
+      widgets.add(Text(val, style: style));
+    }
+
+    return widgets;
   }
 
   Widget? buildImage(BuildContext context) {
