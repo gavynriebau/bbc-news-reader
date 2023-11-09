@@ -4,7 +4,7 @@ Click an image for a video demo.
 
 | Home                             | Details                             |
 | -------------------------------- | ----------------------------------- |
-| [![Home](./docs/home_view.png)](./docs/demo_scaled.mp4)    |  [![Details](./docs/details_view.png)](./docs/demo_scaled.mp4) |
+| [![Home](./docs/home_view.png)](./docs/demo.mp4)    |  [![Details](./docs/details_view.png)](./docs/demo.mp4) |
 
 ## Why
 
