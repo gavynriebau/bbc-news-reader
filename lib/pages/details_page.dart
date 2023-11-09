@@ -9,6 +9,7 @@ import '../services/article_fetcher.dart';
 
 const padding = 16.0;
 const paddingEdgeInsets = EdgeInsets.fromLTRB(padding, padding, padding, 0);
+const paddingTopInsetOnly = EdgeInsets.fromLTRB(0, padding, 0, 0);
 
 KiwiContainer container = KiwiContainer();
 
@@ -54,30 +55,35 @@ class _DetailsPageState extends State<DetailsPage> {
 
     return _contents
         .map((x) => switch (x.contentType) {
-              ContentType.text => Row(
-                  children: [Expanded(child: Text(x.contents))],
-                ),
-              ContentType.image => Row(
-                  children: [
-                    Expanded(
-                        child: Image.network(
-                      x.contents,
-                      fit: BoxFit.fill,
-                    ))
-                  ],
-                ),
-              ContentType.byline => Row(
-                  children: [
-                    Expanded(
-                        child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children:
-                          _buildBylineWidgetsFromText(context, x.contents),
-                    ))
-                  ],
-                )
+              ContentType.text => Container(
+                  margin: paddingEdgeInsets,
+                  child: Row(
+                    children: [Expanded(child: Text(x.contents))],
+                  )),
+              ContentType.image => Container(
+                  margin: paddingTopInsetOnly,
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Image.network(
+                        x.contents,
+                        fit: BoxFit.fill,
+                      ))
+                    ],
+                  )),
+              ContentType.byline => Container(
+                  margin: paddingEdgeInsets,
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children:
+                            _buildBylineWidgetsFromText(context, x.contents),
+                      ))
+                    ],
+                  ))
             })
-        .map((e) => Container(margin: paddingEdgeInsets, child: e))
         .nonNulls
         .toList();
   }
@@ -142,7 +148,6 @@ class _DetailsPageState extends State<DetailsPage> {
                   child: Text(widget.article.title,
                       style: Theme.of(context).textTheme.headlineSmall),
                 ),
-                // Padding(padding: paddingEdgeInsets, child: buildImage(context)),
                 Container(
                   margin: paddingEdgeInsets,
                   child: Text(widget.article.summary,
