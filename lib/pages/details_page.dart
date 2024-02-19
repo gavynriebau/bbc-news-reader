@@ -3,6 +3,7 @@ import 'package:kiwi/kiwi.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../article.dart';
+import '../content_item.dart';
 import '../services/article_fetcher.dart';
 
 const padding = 16.0;

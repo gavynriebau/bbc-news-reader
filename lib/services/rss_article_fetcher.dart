@@ -6,6 +6,7 @@ import 'package:html/parser.dart';
 
 import '../article.dart';
 import '../constants.dart';
+import '../content_item.dart';
 import 'article_fetcher.dart';
 
 class RssArticleFetcher implements ArticleFetcher {
