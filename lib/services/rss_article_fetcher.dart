@@ -27,7 +27,7 @@ class RssArticleFetcher implements ArticleFetcher {
       final html = document.outerHtml;
       developer.log("Fetched html = $html");
 
-      final elements = document.querySelectorAll('channel > item');
+      final elements = document.querySelectorAll('channel item');
 
       // Title and subtitle are wrapped in a CDATA tag.
       RegExp cdataRegex = RegExp(r'.*\[CDATA\[(.*)\]\].*');
