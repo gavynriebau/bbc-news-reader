@@ -11,6 +11,7 @@ import 'article_fetcher.dart';
 
 class RssArticleFetcher implements ArticleFetcher {
   final Map<String, Future<Document>> _cacheArticleUrlToDocument = {};
+  final Map<String, String> _articleUrlToFeatureImageUrl = {};
 
   @override
   Future<List<Article>> fetchFromRssFeed(String rssUrl) async {
@@ -39,6 +40,11 @@ class RssArticleFetcher implements ArticleFetcher {
             element.querySelector('description')?.nodes.first.text;
         final url = element.querySelector('guid')?.text;
         final pubDate = element.querySelector('pubDate')?.text;
+        final mediaThumbnailElement = element.querySelector('media\\:thumbnail');
+        final mediaThumbnailUrl = mediaThumbnailElement?.attributes['url'];
+        if (url != null && mediaThumbnailUrl != null) {
+          _articleUrlToFeatureImageUrl[url] = mediaThumbnailUrl;
+        }
 
         if (titleRaw == null ||
             subtitleRaw == null ||
@@ -93,6 +99,10 @@ class RssArticleFetcher implements ArticleFetcher {
 
   @override
   Future<String> featureImageUrl(Article article) async {
+    if (_articleUrlToFeatureImageUrl.containsKey(article.detailsUrl)) {
+      return _articleUrlToFeatureImageUrl[article.detailsUrl]!;
+    }
+
     final document = await _document(article);
 
     final featureImageBlock = document
